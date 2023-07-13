@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
+import { Observable, of } from 'rxjs';
+import { User } from '../_models/user';
 
 @Component({
   selector: 'app-nav',
@@ -9,26 +11,21 @@ import { AccountService } from '../_services/account.service';
 export class NavComponent implements OnInit {
 
   model:any = {};
-  loggedIn = false;
+  //Using accountservice directly in the templateurl - html instead of using it in the .ts file.
+  // Commenting the currentUser$ observable code here in .ts file and making the accountService public from private 
+  // so we can have access in the templateurl - html
+  currentUser$: Observable<User | null> = of(null);
 
   constructor(private accountService: AccountService) { }
 
   ngOnInit(): void {
-    this.getCurrentUser();
-  }
-
-  getCurrentUser(){
-    this.accountService.currentUser$.subscribe({
-      next: user => this.loggedIn = !!user,
-      error: err => console.log(err)
-    })
+    this.currentUser$ = this.accountService.currentUser$
   }
 
   login() {
     this.accountService.login(this.model).subscribe({
       next: res => {
         console.log(res);
-        this.loggedIn = true;
       },
       error: err => console.log(err) 
     })
@@ -38,7 +35,6 @@ export class NavComponent implements OnInit {
 
   logout() {
     this.accountService.logout();
-    this.loggedIn = false;
   }
 
 }
