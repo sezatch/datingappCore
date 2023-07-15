@@ -14,12 +14,12 @@ export class NavComponent implements OnInit {
   //Using accountservice directly in the templateurl - html instead of using it in the .ts file.
   // Commenting the currentUser$ observable code here in .ts file and making the accountService public from private 
   // so we can have access in the templateurl - html
-  currentUser$: Observable<User | null> = of(null);
+  // currentUser$: Observable<User | null> = of(null);
 
-  constructor(private accountService: AccountService) { }
+  constructor(public accountService: AccountService) { }
 
   ngOnInit(): void {
-    this.currentUser$ = this.accountService.currentUser$
+    // this.currentUser$ = this.accountService.currentUser$
   }
 
   login() {
