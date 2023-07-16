@@ -3,6 +3,7 @@ import { AccountService } from '../_services/account.service';
 import { Observable, of } from 'rxjs';
 import { User } from '../_models/user';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -17,7 +18,8 @@ export class NavComponent implements OnInit {
   // so we can have access in the templateurl - html
   // currentUser$: Observable<User | null> = of(null);
 
-  constructor(public accountService: AccountService, private router: Router) { }
+  constructor(public accountService: AccountService, private router: Router,
+     private toastr: ToastrService) { }
 
   ngOnInit(): void {
     // this.currentUser$ = this.accountService.currentUser$
@@ -26,7 +28,7 @@ export class NavComponent implements OnInit {
   login() {
     this.accountService.login(this.model).subscribe({
       next: () => this.router.navigateByUrl('/members'),
-      error: err => console.log(err) 
+      error: err => this.toastr.error(err.error) 
     })
 
   }
