@@ -28,7 +28,7 @@ export class MemberDetailComponent implements OnInit {
         preview: false
       }
     ];
-  }
+  } 
 
   getImages(){
     if(!this.member) return [];
