@@ -46,11 +46,30 @@ namespace API.Data
 
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
-           var query =  _context.Users
-                .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                .AsNoTracking();
+           var query =  _context.Users.AsQueryable();
 
-            return await PagedList<MemberDto>.CreateAsync(query, userParams.pageNumber, userParams.PageSize);
+           query = query.Where(u => u.UserName != userParams.CurrentUserName);
+           query = query.Where(u => u.Gender == userParams.Gender);
+
+            //minDob gives value of the youngest year of a person -- 1997 born person is younger than 1980. minDob has 1997
+            // Today's year - maxage - 1 -- substracting the present year
+            //maxDob gives the oldest year of a person -- 1980 
+           var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
+           var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+
+
+            query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+            
+            // query = userParams.OrderBy switch
+            // {
+            //     "created" => query.OrderByDescending(u=> u.AccountCreated),
+            //     _ => query.OrderByDescending(u=> u.LastActive)
+            // };
+            
+            return await PagedList<MemberDto>.CreateAsync(
+                query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.pageNumber,
+                 userParams.PageSize);
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
