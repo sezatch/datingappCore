@@ -3,7 +3,7 @@
 </div>
 
 <div class="container mt-3" *ngIf="userParams">
-    <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()" autocomplete="off">
+    <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()"  autocomplete="off">
         <div class="d-flex mx-2">
             <label class="col-form-label">Age from:</label>
             <input 
@@ -13,7 +13,7 @@
                 name="minAge" 
                 [(ngModel)]="userParams.minAge">
         </div>
-        <div class="d-flex mx-2">
+        <div class="d-flex px-2">
             <label class="col-form-label">Age to:</label>
             <input 
                 type="number" 
@@ -27,7 +27,7 @@
             <label class="col-form-label me-2">Show:</label>
             <select name="gender" 
                 style="width: 130px;"
-                class="form-select ms-1"
+                class="form-select ml-1"
                 [(ngModel)]="userParams.gender">
                 <option *ngFor="let gender of genderList" [value]="gender.value">
                     {{gender.display}}
@@ -45,7 +45,7 @@
                     class="btn btn-primary"
                     name="orderBy" 
                     [(ngModel)]="userParams.orderBy"
-                    btnRadio="lastActivex"
+                    btnRadio="lastActive"
                     (click)="loadMembers()">Last Active</button>
                 <button
                     type="button"

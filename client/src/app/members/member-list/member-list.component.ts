@@ -3,7 +3,6 @@ import { Observable, take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
 import { Pagination } from 'src/app/_models/pagination';
 import { UserParams } from 'src/app/_models/userParams';
-import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -35,7 +34,7 @@ export class MemberListComponent implements OnInit {
   loadMembers(){
     if(this.userParams){
       this.memberService.setUserParams(this.userParams);
-    this.memberService.getMembers(this.userParams).subscribe({
+      this.memberService.getMembers(this.userParams).subscribe({
       next: res => {
         if(res.result && res.pagination){
           this.members = res.result;
@@ -46,6 +45,15 @@ export class MemberListComponent implements OnInit {
   }
   }
 
+  // applyFilters() {
+  //   if(this.userParams){
+  //     this.userParams.pageNumber = 1;
+  //     this.memberService.setUserParams(this.userParams);
+  //     this.loadMembers();
+  //   }
+  // }
+
+
   resetFilters(){
       this.userParams = this.memberService.resetUserParams();
       this.loadMembers();
@@ -55,7 +63,7 @@ export class MemberListComponent implements OnInit {
     if(this.userParams && this.userParams?.pageNumber !== event.page){
       this.userParams.pageNumber = event.page;
       this.memberService.setUserParams(this.userParams);
-      this.loadMembers()
+      this.loadMembers();
     }
   }
 }
