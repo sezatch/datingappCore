@@ -37,12 +37,7 @@ namespace API.Controllers
             
             var user = _mapper.Map<AppUser>(registerDto);
 
-            using var hmac = new HMACSHA512();
-
             user.UserName = registerDto.Username.ToLower();
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
-            user.PasswordSalt = hmac.Key;
-
             // Entity Framework will add the user in db based on _context.
             _context.Users.Add(user);
 
@@ -65,17 +60,6 @@ namespace API.Controllers
                         .FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
             if(user == null) return Unauthorized("Invalid Username");
-
-
-            // passing the passwordsalt from db to generate and compare the password salt for provided login details by the user
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-
-            var computedHashLoginDto = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-            for(int i=0; i< computedHashLoginDto.Length; i++)
-            {
-                if (computedHashLoginDto[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
-            }
 
             // return user;
             return new UserDto
