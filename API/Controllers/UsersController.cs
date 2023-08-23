@@ -37,6 +37,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        // [Authorize(Roles ="Admin")] -- Commenting for Policy based approach for Roles
         // public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
@@ -64,6 +65,7 @@ namespace API.Controllers
             // return BadRequest();
         }
 
+        // [Authorize(Roles ="Member")] -- Commenting for Policy based approach for Roles
         [HttpGet("{username}")]
         // public async Task<ActionResult<AppUser>> GetUser(string username)
         public async Task<ActionResult<MemberDto>> GetUser(string username)
@@ -83,7 +85,7 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> updateUser(MemberUpdateDto memberUpdateDto)
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
             // Added Extension Method ClaimsPrincipleExtensions
             // var username =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

@@ -25,5 +25,5 @@ export function getPaginatedResults<T>(url: string, params: HttpParams, http: Ht
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
 
-      return params;
+    return params;
   }
