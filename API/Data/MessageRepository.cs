@@ -85,9 +85,7 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string RecipientUsername)
         {
-           var messages = await _context.Messages
-                                .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+           var query =  _context.Messages
                                 .Where(
                                     m => m.RecipientUsername == currentUsername && m.RecipientDeleted == false &&
                                     m.SenderUsername == RecipientUsername || 
@@ -95,9 +93,21 @@ namespace API.Data
                                     m.SenderUsername == currentUsername
                                 )
                                 .OrderBy(m=> m.MessageSent)
-                                .ToListAsync();
+                                .AsQueryable();
+        // Using projection for optimising queries
+        //    var messages = await _context.Messages
+        //                         .Include(u => u.Sender).ThenInclude(p => p.Photos)
+        //                         .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+        //                         .Where(
+        //                             m => m.RecipientUsername == currentUsername && m.RecipientDeleted == false &&
+        //                             m.SenderUsername == RecipientUsername || 
+        //                             m.RecipientUsername == RecipientUsername && m.SenderDeleted == false &&
+        //                             m.SenderUsername == currentUsername
+        //                         )
+        //                         .OrderBy(m=> m.MessageSent)
+        //                         .ToListAsync();
 
-            var unreadMessages = messages.Where(m => m.DateRead == null 
+            var unreadMessages = query.Where(m => m.DateRead == null 
                                             && m.RecipientUsername == currentUsername).ToList();
 
             if(unreadMessages.Any())
@@ -107,10 +117,10 @@ namespace API.Data
                     message.DateRead = DateTime.UtcNow;
                 }
 
-                await _context.SaveChangesAsync();
+                // await _context.SaveChangesAsync();
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void RemoveConnection(Connection connection)
@@ -118,9 +128,9 @@ namespace API.Data
             _context.Connections.Remove(connection);   
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0; 
-        }
+        // public async Task<bool> SaveAllAsync()
+        // {
+        //     return await _context.SaveChangesAsync() > 0; 
+        // }
     }
 }
